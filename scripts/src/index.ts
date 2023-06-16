@@ -27,6 +27,4 @@ async function test(url = "https://synergia.librus.pl") {
   }
 }
 
-// TODO: change url to make the functions work
-
 test();
