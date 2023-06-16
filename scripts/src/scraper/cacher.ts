@@ -13,17 +13,8 @@ export default class Cacher {
 
   save(url: string, data: string): Promise<boolean> {
     return new Promise<boolean>(async (res, rej) => {
-      let newUrl = url;
-      console.log(newUrl);
-      if (url.search("://") != -1) {
-        newUrl = url.split("://")[1]!;
-      }
-      if (newUrl.search("/") != -1) {
-        newUrl = newUrl.split("/")[0]!;
-      }
-      newUrl = ".cache/" + newUrl + ".html";
       try {
-        fs.writeFileSync(newUrl, data);
+        fs.writeFileSync(url, data);
         res(true);
       } catch (err) {
         rej(err);
@@ -33,23 +24,36 @@ export default class Cacher {
 
   read(url: string) {
     return new Promise<string | undefined>(async (res, rej) => {
-      let newUrl: string = url;
-      console.log(newUrl);
-      if (url.search("://") != -1) {
-        newUrl = url.split("://")[1]!;
-      }
-      if (newUrl.search("/") != -1) {
-        newUrl = newUrl.split("/")[0]!;
-      }
-      newUrl = ".cache/" + newUrl + ".html";
       try {
-        fs.readFile(newUrl, (err, data) => {
+        fs.readFile(url, (err, data) => {
           if (err) rej(err);
-          res(JSON.stringify(data));
+          res(data.toString());
         });
       } catch (err) {
         rej(err);
       }
     });
+  }
+
+  generateName(url: string): string {
+    let newUrl = "";
+    if (url.search("://") != -1) {
+      if (url.split("/").length > 1) {
+        const urlParts = url.split("://")[1]!.split("/");
+        for (let i = 0; i < urlParts.length; i++) {
+          if (i > 0) {
+            newUrl += "_";
+          }
+          newUrl += urlParts[i];
+        }
+      } else {
+        newUrl = url.split("://")[1]!;
+      }
+    } else {
+      newUrl = url;
+    }
+    newUrl = ".cache/" + newUrl + ".html";
+    console.log(newUrl);
+    return newUrl;
   }
 }
