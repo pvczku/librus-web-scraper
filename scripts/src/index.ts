@@ -26,5 +26,4 @@ async function test(url = "https://synergia.librus.pl") {
     return;
   }
 }
-
 test();
